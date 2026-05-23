@@ -123,9 +123,6 @@ android.presplash = Dots and Boxes
 # (bool) Copy library instead of making a libpymodules.so
 #android.copy_libs = 1
 
-# (str) The Android arch to build for, choices: armeabi-v7a, arm64-v8a, x86, x86_64
-android.archs = arm64-v8a
-
 # (int) overrides automatic versionCode generation (method 1)
 # android.version_code = 1
 
