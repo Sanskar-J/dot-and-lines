@@ -46,15 +46,20 @@ jobs:
       run: |
         mkdir -p $HOME/.buildozer/android/platform/android-sdk
         export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
-        export ANDROID_HOME=$ANDROID_SDK_ROOT
+        export ANDROID_HOME=/usr/lib/android-sdk
         
-        # Install Android SDK tools and build-tools
-        yes | /usr/lib/android-sdk/tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "build-tools;31.0.0" "platforms;android-31" "platform-tools" 2>&1 || true
+        # Link system Android SDK to buildozer location
+        ln -sf /usr/lib/android-sdk/* $ANDROID_SDK_ROOT/ 2>/dev/null || true
+        
+        # Install build-tools and platforms using sdkmanager from system SDK
+        if [ -f /usr/lib/android-sdk/tools/bin/sdkmanager ]; then
+          yes | /usr/lib/android-sdk/tools/bin/sdkmanager "build-tools;31.0.0" "platforms;android-31" "platform-tools" 2>&1 || true
+        fi
     
     - name: Build APK
       env:
-        ANDROID_SDK_ROOT: /home/runner/.buildozer/android/platform/android-sdk
-        ANDROID_HOME: /home/runner/.buildozer/android/platform/android-sdk
+        ANDROID_SDK_ROOT: /usr/lib/android-sdk
+        ANDROID_HOME: /usr/lib/android-sdk
       run: |
         buildozer android debug
     
