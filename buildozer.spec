@@ -123,8 +123,8 @@ android.presplash = Dots and Boxes
 # (bool) Copy library instead of making a libpymodules.so
 #android.copy_libs = 1
 
-# (int) overrides automatic versionCode generation (method 1)
-# android.version_code = 1
+# (int) Log level (0 = error only, 1 = info, 2 = debug (with command output))
+log_level = 2
 
 # (bool) Copy library instead of making a libpymodules.so
 android.copy_libs = 1
