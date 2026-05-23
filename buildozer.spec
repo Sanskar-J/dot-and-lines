@@ -98,6 +98,9 @@ android.archs = arm64-v8a,armeabi-v7a
 # (bool) allows AndroidManifest.xml generation without INTERNET permission,
 # android.allow_backup = True
 
+# (bool) Auto accept the Android SDK licenses
+android.accept_sdk_license = True
+
 # (str) XML for custom backup agent. Check [here](https://developer.android.com/guide/topics/data/backup) for more info.
 # android.backup_agent = MyBackupAgent
 
