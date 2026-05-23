@@ -92,6 +92,23 @@ def set_background(bg_name, fallback_color):
             pass
         window.bgcolor(fallback_color)
 
+def draw_rounded_rect(drawer, x, y, width, height, radius, border_color, fill_color, pensize=2):
+    """Draw a rounded rectangle centered at (x,y)"""
+    drawer.penup()
+    drawer.goto(x - width/2 + radius, y + height/2)
+    drawer.setheading(0)
+    drawer.pendown()
+    drawer.color(border_color, fill_color)
+    drawer.pensize(pensize)
+    drawer.begin_fill()
+    for _ in range(2):
+        drawer.forward(width - 2*radius)
+        drawer.circle(-radius, 90)
+        drawer.forward(height - 2*radius)
+        drawer.circle(-radius, 90)
+    drawer.end_fill()
+    drawer.penup()
+
 def draw_splash():
     """Draw the splash screen with Start button"""
     global current_state
@@ -107,31 +124,20 @@ def draw_splash():
     set_background("bg1", BG_SPLASH_FALLBACK)
     
     ui_drawer.penup()
-    ui_drawer.goto(0, 150)
+    ui_drawer.goto(0, 160)
     ui_drawer.color(TEXT_COLOR)
-    ui_drawer.write("Dots and Boxes", align="center", font=("Verdana", 42, "bold"))
-    ui_drawer.goto(0, 80)
-    ui_drawer.write("The Classic Strategy Game", align="center", font=("Verdana", 16, "normal"))
+    ui_drawer.write("Dots and Boxes", align="center", font=("Helvetica", 48, "bold"))
+    ui_drawer.goto(0, 100)
+    ui_drawer.write("The Classic Strategy Game", align="center", font=("Helvetica", 18, "italic"))
     
     # Draw Start Button
-    btn_width = 200
+    btn_width = 220
     btn_height = 60
-    ui_drawer.goto(-btn_width // 2, -20)
-    ui_drawer.pendown()
-    ui_drawer.fillcolor(START_BTN_COLOR)
-    ui_drawer.pencolor(START_BTN_COLOR)
-    ui_drawer.begin_fill()
-    for _ in range(2):
-        ui_drawer.forward(btn_width)
-        ui_drawer.right(90)
-        ui_drawer.forward(btn_height)
-        ui_drawer.right(90)
-    ui_drawer.end_fill()
-    ui_drawer.penup()
+    draw_rounded_rect(ui_drawer, 0, -40, btn_width, btn_height, 15, START_BTN_COLOR, START_BTN_COLOR)
     
-    ui_drawer.goto(0, -65)
+    ui_drawer.goto(0, -52)
     ui_drawer.color(BTN_TEXT_COLOR)
-    ui_drawer.write("START GAME", align="center", font=("Verdana", 18, "bold"))
+    ui_drawer.write("START GAME", align="center", font=("Helvetica", 16, "bold"))
     window.update()
 
 def start_game(n):
@@ -179,7 +185,7 @@ def show_game_over():
     
     ui_drawer.clear()
     ui_drawer.penup()
-    ui_drawer.goto(0, 150)
+    ui_drawer.goto(0, 160)
     
     if player1_score > player2_score:
         msg = "Player 1 Wins!"
@@ -192,17 +198,22 @@ def show_game_over():
         color = TEXT_COLOR
         
     ui_drawer.color(color)
-    ui_drawer.write(msg, align="center", font=("Verdana", 48, "bold"))
+    ui_drawer.write(msg, align="center", font=("Helvetica", 54, "bold"))
     
-    ui_drawer.goto(0, 50)
+    # Draw Score Box
+    score_width = 380
+    score_height = 80
+    draw_rounded_rect(ui_drawer, 0, 60, score_width, score_height, 15, "#bdc3c7", WHITE)
+    
+    ui_drawer.goto(0, 48)
     ui_drawer.color(TEXT_COLOR)
-    score_txt = f"Final Score\nPlayer 1: {player1_score}   |   Player 2: {player2_score}"
-    ui_drawer.write(score_txt, align="center", font=("Verdana", 20, "normal"))
+    score_txt = f"Player 1: {player1_score}   |   Player 2: {player2_score}"
+    ui_drawer.write(score_txt, align="center", font=("Helvetica", 20, "bold"))
     
-    # Restart Button
-    ui_drawer.goto(0, -100)
+    # Restart Text
+    ui_drawer.goto(0, -50)
     ui_drawer.color(START_BTN_COLOR)
-    ui_drawer.write("Click anywhere to return to Main Menu", align="center", font=("Verdana", 16, "italic"))
+    ui_drawer.write("Click anywhere to return to Main Menu", align="center", font=("Helvetica", 16, "italic"))
     window.update()
 
 def draw_grid():
@@ -333,20 +344,34 @@ def fill_box(bx, by, color):
     box_drawer.penup()
 
 def update_info():
-    """Update player info text during game"""
+    """Update player info text and UI during game"""
     info_drawer.clear()
-    info_drawer.penup()
     
-    y_pos = GRID_SIZE * CELL_SIZE // 2 + 30
-    info_drawer.goto(0, y_pos)
+    top_y = window.window_height() / 2 - 40
     
-    color = PLAYER1_COLOR if current_player == 1 else PLAYER2_COLOR
-    info_drawer.color(color)
+    # 1. Scoreboard (Top Center)
+    score_width = 320
+    score_height = 45
+    draw_rounded_rect(info_drawer, 0, top_y, score_width, score_height, 12, "#bdc3c7", WHITE, pensize=2)
     
-    turn_txt = f"Player {current_player}'s Turn"
-    score_txt = f"P1 (Blue): {player1_score}   |   P2 (Red): {player2_score}"
+    info_drawer.goto(0, top_y - 12)
+    info_drawer.color(TEXT_COLOR)
+    score_txt = f"P1 Score: {player1_score}      P2 Score: {player2_score}"
+    info_drawer.write(score_txt, align="center", font=("Helvetica", 15, "bold"))
     
-    info_drawer.write(f"{turn_txt}\n{score_txt}", align="center", font=("Verdana", 14, "bold"))
+    # 2. Player Turn Indicator (Top Right)
+    turn_width = 150
+    turn_height = 45
+    right_x = window.window_width() / 2 - turn_width / 2 - 20
+    
+    current_color = PLAYER1_COLOR if current_player == 1 else PLAYER2_COLOR
+    current_fill = PLAYER1_FILL if current_player == 1 else PLAYER2_FILL
+    
+    draw_rounded_rect(info_drawer, right_x, top_y, turn_width, turn_height, 12, current_color, current_fill, pensize=3)
+    
+    info_drawer.goto(right_x, top_y - 10)
+    info_drawer.color(BLACK)
+    info_drawer.write(f"Player {current_player}'s Turn", align="center", font=("Helvetica", 13, "bold"))
 
 def check_game_over():
     total_boxes = (GRID_SIZE - 1) * (GRID_SIZE - 1)
@@ -361,9 +386,9 @@ def on_click(x, y):
     
     if current_state == STATE_SPLASH:
         # Check if Start button is clicked
-        btn_width = 200
+        btn_width = 220
         btn_height = 60
-        if -btn_width//2 <= x <= btn_width//2 and -80 <= y <= -20:
+        if -btn_width//2 <= x <= btn_width//2 and -70 <= y <= -10:
             user_input = window.numinput("Grid Size", "Enter the grid size (n x n):", minval=2, maxval=50, default=5)
             if user_input is not None:
                 start_game(int(user_input))

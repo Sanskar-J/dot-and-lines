@@ -10,7 +10,6 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
-from kivy.garden.matplotlib.backend_kivyagg import FigureCanvasKivyAgg
 from kivy.uix.image import Image
 from kivy.graphics import Line, Color, Ellipse, Rectangle
 from kivy.uix.widget import Widget
