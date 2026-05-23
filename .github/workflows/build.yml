@@ -46,7 +46,12 @@ jobs:
           pkg-config \
           zlib1g-dev \
           cmake \
-          libncurses-dev
+          libncurses5-dev \
+          libncursesw5-dev \
+          libtinfo6 \
+          automake \
+          autopoint \
+          gettext
 
     - name: Build APK
       run: |
